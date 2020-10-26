@@ -1,0 +1,348 @@
+---
+swagger: "2.0"
+info:
+  version: "3.0.0-rev13"
+  title: "Aadhar Validation & get Details Using OTP"
+  description: "Firstly,this capability validates Aadhar number and if successful, sends One time password on registered mobile number. Secondly valid one time Password is used to retreive his/her Aadhar details."
+  x-ibm-name: "Aadhar Validation & get Details Using OTP"
+basePath: "/soa"
+schemes:
+- "https"
+x-ibm-configuration:
+  enforced: true
+  phase: "realized"
+  testable: false
+  cors:
+    enabled: false
+  properties:
+    x-ibm-gateway-proxy-suppress-clientid:
+      value: "true"
+      description: ""
+      encoded: false
+  catalogs: {}
+  externalDocs: []
+  attachments: []
+  gateway: "datapower-gateway"
+  assembly:
+    execute:
+    - operation-switch:
+        title: "operation-switch"
+        case:
+        - operations:
+          - verb: "post"
+            path: "/AadharOtp/v1/real"
+          execute:
+          - proxy:
+              verb: "keep"
+              timeout: 60
+              cache-response: "protocol"
+              cache-ttl: 900
+              target-url: "http://127.0.0.1:7020"
+tags:
+- name: "NEO"
+  description: "This tag consist of consumer name like NEO, MAPP etc. who is consuming\
+    \ this api till now and sub capability of the api."
+- name: "MAPP"
+  description: "This tag consist of consumer name like NEO, MAPP etc. who is consuming\
+    \ this api till now and sub capability of the api."
+- name: "Aadhaar"
+  description: "This tag consist of consumer name like NEO, MAPP etc. who is consuming\
+    \ this api till now and sub capability of the api."
+definitions: {}
+securityDefinitions: {}
+paths:
+  /AadharOtp/v1/real:
+    post:
+      description: "request complete information like Name,Gender,Address,aadhar Number,Date\
+        \ Of Birth,Mobile Number etc. in pdf & text format against the aadharCard\
+        \ holder."
+      tags: []
+      summary: ""
+      parameters:
+      - schema:
+          type: "object"
+          properties:
+            request:
+              type: "object"
+              properties:
+                header:
+                  type: "object"
+                  properties:
+                    soaCorrelationId:
+                      type: "string"
+                      description: "This field is used for having correlation of the\
+                        \ message in SOA domain."
+                    soaMsgVersion:
+                      type: "string"
+                      description: "This field is used for the version of the message\
+                        \ in SOA layer."
+                    soaAppId:
+                      type: "string"
+                      description: "This field is used for consumer or application\
+                        \ idetifier 'NEO'."
+                    soaUserId:
+                      type: "string"
+                      description: "This field is used for the consumer/user Id authentication."
+                    soaPassword:
+                      type: "string"
+                      description: "This field is used for the consumer/user password\
+                        \ authentication."
+                  required:
+                  - "soaCorrelationId"
+                  - "soaMsgVersion"
+                  - "soaAppId"
+                  - "soaUserId"
+                  - "soaPassword"
+                requestData:
+                  type: "object"
+                  properties:
+                    requestPayload:
+                      type: "object"
+                      properties:
+                        transactions:
+                          type: "array"
+                          items:
+                            type: "object"
+                            properties:
+                              aadhaarNumber:
+                                type: "string"
+                                description: "This field is used for the Aadhar Number\
+                                  \ of the consumer."
+                              requestType:
+                                type: "string"
+                                description: "This field is used for the requestType,\
+                                  \ O for OTP and A for authentication."
+                              otp:
+                                type: "string"
+                                description: "This field is maindatory only if requestType is A and it contains one time password"
+                              type:
+                                type: "string"
+                                description: "This field is used for validation type. This will always be 'AadharOTPAuth' "
+                            required:
+                            - "aadhaarNumber"
+                            - "requestType"
+                            - "type"
+                      required:
+                      - "transactions"
+                  required:
+                  - "requestPayload"
+              required:
+              - "header"
+              - "requestData"
+          required:
+          - "request"
+          example: "{\n   \"request\": {\n      \"header\": {\n         \"soaCorrelationId\"\
+            : \"25897\",\n         \"soaMsgVersion\": \"1.0\",\n         \"soaAppId\"\
+            : \"NEO\",\n         \"soaUserId\": \"NEO123\",\n         \"soaPassword\"\
+            : \"PASSWORD\"\n      },\n      \"requestData\": {\n         \"requestPayload\"\
+            : {\n            \"transactions\": [\n               {\n             \
+            \     \"aadhaarNumber\": \"999929989823\",\n                  \"requestType\"\
+            : \"O\",\n                  \"otp\": \"\",\n                  \"type\"\
+            : \"AadhaarOTPAuth\"\n               }\n            ]\n         }\n  \
+            \    }\n   }\n}"
+        description: ""
+        name: "body"
+        in: "body"
+      responses:
+        200:
+          schema:
+            type: "object"
+            properties:
+              response:
+                type: "object"
+                properties:
+                  header:
+                    type: "object"
+                    properties:
+                      soaCorrelationId:
+                        type: "string"
+                        description: "This field is used for having correlation of\
+                          \ the message in SOA domain."
+                      soaMsgVersion:
+                        type: "string"
+                        description: "This field is used for the version of the message\
+                          \ in SOA layer."
+                      soaAppId:
+                        type: "string"
+                        description: "This field is used for consumer or application\
+                          \ idetifier 'NEO'."
+                    required:
+                    - "soaCorrelationId"
+                    - "soaMsgVersion"
+                    - "soaAppId"
+                  responseData:
+                    type: "object"
+                    properties:
+                      soaStatusCode:
+                        type: "string"
+                        description: "This field is used for status code update."
+                      soaMessage:
+                        type: "string"
+                        description: "This field is used for response message eg.\
+                          \ Success/Failure."
+                      ResponsePayload:
+                        type: "object"
+                        properties:
+                          Transactions:
+                            type: "array"
+                            items:
+                              type: "object"
+                              properties:
+                                transactionData:
+                                  type: "object"
+                                  properties:
+                                    statusCode:
+                                      type: "string"
+                                      description: "This field is used for status\
+                                        \ code update."
+                                    statusDesc:
+                                      type: "string"
+                                      description: "This field is used for response\
+                                        \ message eg. Success/Failure"
+                                    message:
+                                      type: "string"
+                                      description: "This field is used for response\
+                                        \ message description."
+                                    status:
+                                      type: "string"
+                                      description: "This field is used for status\
+                                        \ ,'S' for success and 'E' for Error."
+                                    name:
+                                      type: "string"
+                                      description: "This field is used for name of\
+                                        \ the consumer."
+                                    tokenNo:
+                                      type: "string"
+                                      description: "This field is used for token number."
+                                    aadharNo:
+                                      type: "string"
+                                      description: "This field is used for aadhar\
+                                        \ number of the consumer."
+                                    DOB:
+                                      type: "string"
+                                      description: "This field is used for DOB of\
+                                        \ the consumer."
+                                    phone:
+                                      type: "string"
+                                      description: "This field is used for phone number\
+                                        \ of the consumer."
+                                    email:
+                                      type: "string"
+                                      description: "This field is used for email of\
+                                        \ the consumer."
+                                    CareOf:
+                                      type: "string"
+                                      description: " This field is used to mention\
+                                        \ the name of the caretaker"
+                                    House:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the customer House number."
+                                    Street:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the customer Street number."
+                                    Landmark:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the customer's residence nearby landmark"
+                                    Location:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the location of customer's residence."
+                                    PinCode:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the PinCode of customer's residence."
+                                    Post Office:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the customer's residence nearby post office."
+                                    Vill/City:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the vill/city of customer's residence."
+                                    Sub-Dist:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the Sub-Dist of customer's residence."
+                                    Dist:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the Dist of customer's residence."
+                                    State:
+                                      type: "string"
+                                      description: "This field is used to mention\
+                                        \ the state of customer's residence."
+                                    gender:
+                                      type: "string"
+                                      description: "This field is used for gender\
+                                        \ of the consumer."
+                                    image:
+                                      type: "string"
+                                      description: "This field is used for image."
+                                    pdffile:
+                                      type: "string"
+                                      description: "This field is used pdffile."
+                required:
+                - "header"
+                - "responseData"
+            required:
+            - "response"
+          description: "This is success response for http status code"
+          examples:
+            application/json:
+              response:
+                header:
+                  soaCorrelationId: "25897"
+                  soaMsgVersion: "1.0"
+                  soaAppId: "NEO"
+                responseData:
+                  soaStatusCode: " 200 "
+                  soaMessage: " Success "
+                  ResponsePayload:
+                    Transactions:
+                    - transactionData:
+                        statusCode: "200"
+                        statusDesc: "Success"
+                        message: "OTP Generated & sent! "
+                        status: "S"
+                        name: "Rakesh Pawa"
+                        tokenNo: "6ba081a9-76eb-4026-98f0-9294c7853e64"
+                        aadharNo: "999929989823"
+                        DOB: "01-01-1985"
+                        phone: "8373901068"
+                        email: "rakesh.pawa@gmail.com"
+                        CareOf: "Father’s Name"
+                        House: "RZ- 26P/224"
+                        Street: "GALI NO-34"
+                        Landmark: "INDRA PARK"
+                        Location: "PALAM COLONY"
+                        PinCode: "110046"
+                        Post Office: "Post Office"
+                        Vill/City: "Sector 56"
+                        Sub-Dist: "Sub-Dist"
+                        Dist: " South West Delhi "
+                        State: " Delhi "
+                        gender: "M"
+                        image: "JEA4oopLVlJaDtoY8dKBGecUUUgT1GmPnpzQGeM8DpRRTLHMkN16JL/eA/nVuy1i80xxFcAyxdgT/ACNFFTKKa1E1bVG6uqw3kANu3Xqp6iqV5cC1gJHLtwo96KK51BKVgbKdvGIk3ORvzk881JJcBRgdc0UV1IJaFfdM549KmgsN3zycjrRRQJK5dSFYiAqjrUnAJ/pRRSNUhSMkrSbBjFFFA7H/2Q=="
+          headers: {}
+        500:
+          description: "Unable to connect to the back end service"
+          headers: {}
+          examples:
+            application/json:
+              status: "Error"
+              information: "Unable to connect to back end service"
+          schema:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+              information:
+                type: "string"
+            required:
+            - "status"
+            - "information"
+      security: []
+security: []
