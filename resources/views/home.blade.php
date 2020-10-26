@@ -18,7 +18,7 @@
                     <div class="row">
                         {{-- Widget - latest entries --}}
                         <div class="{{ $settings1['column_class'] }}">
-                            <h3>adsaDASDFASF{{ $settings1['chart_title'] }}</h3>
+                            <h3>{{ $settings1['chart_title'] }}</h3>
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
